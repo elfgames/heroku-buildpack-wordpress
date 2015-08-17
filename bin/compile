@@ -114,7 +114,7 @@ cd ${BUILD_DIR}
 cat >>bin/setup.sh <<EOF
 #!/usr/bin/env bash
 
-cp -rf /app/config/* ${BUILD_DIR}
+cp -rf /app/config/* /app
 
 cp /app/vendor/php/php/fpm/status.html /app/public/status.html
 erb /app/vendor/nginx/conf/wordpress.conf.erb > /app/vendor/nginx/conf/wordpress.conf
@@ -142,6 +142,9 @@ cat >>bin/start.sh <<EOF
 #!/usr/bin/env bash
 
 echo "Starting nginx"
+export PATH="/app/vendor/php/bin":$PATH
+export PATH="/app/vendor/php/sbin":$PATH
+export PATH="/app/vendor/nginx/sbin":$PATH
 bin/setup.sh
 (tail -qF -n 0 /app/vendor/nginx/logs/*.log /app/vendor/php/var/log/*.log &)
 php-fpm

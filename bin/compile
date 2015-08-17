@@ -64,7 +64,11 @@ BUILD_DIR=$1
 CACHE_DIR=$2
 mkdir -p $BUILD_DIR $CACHE_DIR
 
-export PATH="$BUILD_DIR/vendor/php/bin":"$BUILD_DIR/vendor/php/sbin":"$BUILD_DIR/vendor/nginx/sbin":$PATH
+export PATH="$BUILD_DIR/vendor/php/bin":$PATH
+export PATH="$BUILD_DIR/vendor/php/sbin":$PATH
+export PATH="$BUILD_DIR/vendor/nginx/sbin":$PATH
+
+echo "PATH CONFIGURATION: $PATH"
 
 # Nginx
 cd ${BUILD_DIR}
@@ -107,18 +111,18 @@ cd ${BUILD_DIR}
 cat >>bin/setup.sh <<EOF
 #!/usr/bin/env bash
 
-cp -rf /app/config/* /app
+cp -rf ${BUILD_DIR}/config/* ${BUILD_DIR}
 
-cp /app/vendor/php/php/fpm/status.html /app/public/status.html
-erb /app/vendor/nginx/conf/wordpress.conf.erb > /app/vendor/nginx/conf/wordpress.conf
-chmod 755 /app/public/wp-content
+cp ${BUILD_DIR}/vendor/php/php/fpm/status.html ${BUILD_DIR}/public/status.html
+erb ${BUILD_DIR}/vendor/nginx/conf/wordpress.conf.erb > ${BUILD_DIR}/vendor/nginx/conf/wordpress.conf
+chmod 755 ${BUILD_DIR}/public/wp-content
 
 # Expose Heroku config vars to PHP-FPM processes
 for var in \`env | cut -f1 -d=\`; do
-  echo "env[\$var] = \\$\${var}" >> /app/vendor/php/etc/php-fpm.conf
+  echo "env[\$var] = \\$\${var}" >> ${BUILD_DIR}/vendor/php/etc/php-fpm.conf
 done
 
-touch /app/vendor/nginx/logs/access.log /app/vendor/nginx/logs/error.log /app/vendor/php/var/log/php-fpm.log
+touch ${BUILD_DIR}/vendor/nginx/logs/access.log ${BUILD_DIR}/vendor/nginx/logs/error.log ${BUILD_DIR}/vendor/php/var/log/php-fpm.log
 EOF
 chmod +x bin/setup.sh
 
@@ -136,7 +140,7 @@ cat >>bin/start.sh <<EOF
 
 echo "Starting nginx"
 bin/setup.sh
-(tail -qF -n 0 /app/vendor/nginx/logs/*.log /app/vendor/php/var/log/*.log &)
+(tail -qF -n 0 ${BUILD_DIR}/vendor/nginx/logs/*.log ${BUILD_DIR}/vendor/php/var/log/*.log &)
 php-fpm
 nginx
 EOF

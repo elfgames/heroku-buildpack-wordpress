@@ -55,6 +55,8 @@ else
   WORDPRESS_INSTALLATION_DIR="public"
 fi
 
+cp -rf /app/config/* /app
+
 echo "-----> Writing cron.sh script"
 mkdir -p ${BUILD_DIR}/bin
 cd ${BUILD_DIR}

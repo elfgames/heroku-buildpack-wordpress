@@ -16,5 +16,5 @@ config_vars:
   DISABLE_WP_CRON: true
   WP_CACHE: true
 default_process_types:
-  web: vendor/bin/heroku-hhvm-nginx config/public/
+  web: cp -rf /app/config/* /app/ && vendor/bin/heroku-hhvm-nginx public/
 EOF

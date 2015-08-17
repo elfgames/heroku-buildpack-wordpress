@@ -17,5 +17,5 @@ config_vars:
   DISABLE_WP_CRON: true
   WP_CACHE: true
 default_process_types:
-  web: start.sh
+  web: bin/start.sh
 EOF

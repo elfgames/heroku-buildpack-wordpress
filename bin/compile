@@ -40,6 +40,10 @@ if [ -z "$S3_BUCKET" ]; then
   S3_BUCKET=heroku-buildpack-wordpress
 fi
 
+if [ -z "$CURL_TIMEOUT" ]; then
+  CURL_TIMEOUT=60
+fi
+
 # END CONFIG
 
 #
@@ -56,6 +60,8 @@ function indent() {
   esac
 }
 
+export PATH="$BUILD_DIR/vendor/php/bin":"$BUILD_DIR/vendor/php/sbin":"$BUILD_DIR/vendor/nginx/sbin":$PATH
+
 BUILD_DIR=$1
 CACHE_DIR=$2
 mkdir -p $BUILD_DIR $CACHE_DIR
@@ -65,7 +71,7 @@ cd ${BUILD_DIR}
 if [ ! -d ./vendor/nginx ]; then
   echo "-----> Installing Nginx v${NGINX_VERSION}"
   mkdir -p ./vendor/nginx && cd ./vendor/nginx
-  curl --silent --max-time 60 --location $NGINX_URL | tar xz
+  curl --silent --max-time $CURL_TIMEOUT --location $NGINX_URL | tar xz
 fi
 
 # PHP
@@ -73,13 +79,13 @@ cd ${BUILD_DIR}
 if [ ! -d ./vendor/php ]; then
   echo "-----> Installing PHP v${PHP_VERSION}"
   mkdir -p ./vendor/php && cd ./vendor/php
-  curl --silent --max-time 60 --location $PHP_URL | tar xz
+  curl --silent --max-time $CURL_TIMEOUT --location $PHP_URL | tar xz
 fi
 
 # WordPress
 echo "-----> Installing WordPress v${WORDPRESS_VERSION}"
 cd ${BUILD_DIR}
-curl --silent --max-time 60 --location $WORDPRESS_URL | tar xz
+curl --silent --max-time $CURL_TIMEOUT --location $WORDPRESS_URL | tar xz
 
 # Support installation of WordPress into a subdirectory instead of the docroot
 if [ -n "$WORDPRESS_DIR" ]; then

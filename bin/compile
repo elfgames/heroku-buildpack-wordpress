@@ -120,7 +120,7 @@ chmod +x bin/setup.sh
 cat >>bin/cron.sh <<EOF
 #!/usr/bin/env bash
 
-setup.sh && cd $WORDPRESS_INSTALLATION_DIR && php wp-cron.php
+bin/setup.sh && cd $WORDPRESS_INSTALLATION_DIR && php wp-cron.php
 EOF
 chmod +x bin/cron.sh
 
@@ -129,7 +129,7 @@ cat >>bin/start.sh <<EOF
 #!/usr/bin/env bash
 
 echo "Starting nginx"
-setup.sh
+bin/setup.sh
 (tail -qF -n 0 /app/vendor/nginx/logs/*.log /app/vendor/php/var/log/*.log &)
 php-fpm
 nginx
